@@ -46,99 +46,99 @@ view.container
       view.btn 购买
 </template>
 <script>
-const app = getApp()
+const app = getApp();
 
 Page({
   data: {
     qiniuCDN: app.globalData.qiniuCDN,
-    payPosition: 'translate(0, 100%)',
+    payPosition: "translate(0, 100%)",
     payContent: false,
     phoneNumber: null,
     address: null,
     name: null,
-    active: 'active',
+    active: "active",
     product: {}
   },
-  async onLoad (query) {
-    wx.showNavigationBarLoading()
+  async onLoad(query) {
+    wx.showNavigationBarLoading();
 
-    const { _id } = query
+    const { _id } = query;
 
     let res = await wx.reqAsync({
       url: `${app.globalData.serverUrl}/api/products/${_id}`
-    })
+    });
 
-    let { data } = res
-
+    let { data } = res.data;
+    // console.log(res)
     // <br /> 转换成 \n ，因为小程序的换行只能在 text 标签中的 \n 能实现
-    data.intro = data.intro.replace(/<br \/>/g, '\n')
+    data.intro = data.intro.replace(/<br \/>/g, "\n");
 
     this.setData({
       product: data
-    })
-    this.product = data
+    });
+    this.product = data;
 
-    let { title } = data
+    let { title } = data;
 
-    wx.setNavigationBarTitle({ title: title })
-    wx.hideNavigationBarLoading()
+    wx.setNavigationBarTitle({ title: title });
+    wx.hideNavigationBarLoading();
   },
-  showPayContent () {
-    const vm = this
-    const coords = { x: 100 }
+  showPayContent() {
+    const vm = this;
+    const coords = { x: 100 };
     const tween = new TWEEN.Tween(coords)
       .to({ x: 0 }, 150)
-      .onUpdate(function () {
+      .onUpdate(function() {
         vm.setData({
           payPosition: `translate(0, ${this.x}%)`
-        })
+        });
       })
-      .start()
+      .start();
 
-    requestAnimationFrame(animate)
+    requestAnimationFrame(animate);
 
-    function animate (time) {
-      requestAnimationFrame(animate)
-      TWEEN.update(time)
+    function animate(time) {
+      requestAnimationFrame(animate);
+      TWEEN.update(time);
     }
   },
-  closePayContent () {
-    const vm = this
-    const coords = { x: 0 }
+  closePayContent() {
+    const vm = this;
+    const coords = { x: 0 };
     const tween = new TWEEN.Tween(coords)
       .to({ x: 100 }, 150)
-      .onUpdate(function () {
+      .onUpdate(function() {
         vm.setData({
           payPosition: `translate(0, ${this.x}%)`
-        })
+        });
       })
-      .start()
+      .start();
 
-    requestAnimationFrame(animate)
+    requestAnimationFrame(animate);
 
-    function animate (time) {
-      requestAnimationFrame(animate)
-      TWEEN.update(time)
+    function animate(time) {
+      requestAnimationFrame(animate);
+      TWEEN.update(time);
     }
   },
-  inputName (e) {
-    this.name = e.detail.value
+  inputName(e) {
+    this.name = e.detail.value;
   },
-  inputAddress (e) {
-    this.address = e.detail.value
+  inputAddress(e) {
+    this.address = e.detail.value;
   },
-  inputPhoneNumber (e) {
-    this.phoneNumber = e.detail.value
+  inputPhoneNumber(e) {
+    this.phoneNumber = e.detail.value;
   },
-  async pay (e) {
-    const product = this.product
+  async pay(e) {
+    const product = this.product;
     // code 时间是 5 分钟，所以直接拿新的 code
-    const { code } = await wx.loginAsync()
-    const userInfo = await wx.getUserInfoAsync()
+    const { code } = await wx.loginAsync();
+    const userInfo = await wx.getUserInfoAsync();
 
     let order = await wx.reqAsync({
       url: `${app.globalData.serverUrl}/mina/createOrder`,
-      method: 'POST',
+      method: "POST",
       data: {
         code: code,
         name: this.name,
@@ -147,41 +147,41 @@ Page({
         userInfo: userInfo,
         productId: product._id
       }
-    })
+    });
 
     if (order.statusCode !== 200 || !order.data.success) {
       return wx.showModal({
-        title: '错误',
+        title: "错误",
         content: order.data.msg || order.data
-      })
+      });
     }
 
-    let res = await wx.payAsync(order.data.order)
+    let res = await wx.payAsync(order.data.order);
 
     res = await wx.reqAsync({
       url: `${app.globalData.serverUrl}/mina/payment`,
-      method: 'POST',
+      method: "POST",
       data: R.merge(res.data, order.data)
-    })
+    });
 
     if (res.statusCode !== 200) {
       return wx.showModal({
-        title: '错误',
+        title: "错误",
         content: res.data
-      })
+      });
     }
 
-    let title = res.data.success ? '恭喜' : '失败'
+    let title = res.data.success ? "恭喜" : "失败";
 
-    this.closePayContent()
+    this.closePayContent();
 
     return wx.showModal({
       title: title,
       content: res.data.msg
-    })
+    });
   },
-  carousel (e) {
-    console.log(e)
+  carousel(e) {
+    console.log(e);
   }
-})
+});
 </script>

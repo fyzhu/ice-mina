@@ -7,13 +7,13 @@ view.container
           view.caption {{item.words}}
           view.headline {{item.cname}}
           view.title {{item.name}}
-        image.carousel-media(src='{{qiniuCDN}}/{{item.cname}}.png', mode='widthFix')
+        image.carousel-media(src='{{qiniuCDN}}/{{item.cname}}.jpg', mode='widthFix')
   view.hr
   view.section
     view.section-title 主要人物
     view.section-body
       view.section-item(wx:for='{{characters}}', catchtap='linkToCharacter', data-character='{{item}}')
-        image.section-media(src='{{qiniuCDN}}/{{item.profile}}?imageView2/1/w/280/h/440/format/jpg/q/75|imageslim')
+        image.section-media(src='{{item.profile}}?imageView2/1/w/280/h/440/format/jpg/q/75|imageslim')
         view.cname {{item.cname}}
         view.name {{item.name}}
         view.playedBy {{item.playedBy}}

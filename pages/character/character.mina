@@ -1,9 +1,9 @@
 <template lang="pug">
 view.character
   view.character-header
-    image.character-header-bg(src='{{qiniuCDN}}/{{character.images[character.images.length - 1]}}?imageView2/1/w/375/h/230/format/jpg/q/90|imageslim', mode='widthFix')
+    image.character-header-bg(src='{{character.images[character.images.length - 1]}}?imageView2/1/w/375/h/230/format/jpg/q/90|imageslim', mode='widthFix')
     view.character-media
-      image(src='{{qiniuCDN}}/{{character.profile}}?imageView2/1/w/280/h/440/format/jpg/q/75|imageslim', mode='widthFix')
+      image(src='{{character.profile}}?imageView2/1/w/280/h/440/format/jpg/q/75|imageslim', mode='widthFix')
         .character-header-footer
           .born
             view {{character.nmId}}
@@ -16,7 +16,7 @@ view.character
     scroll-view(scroll-x)
       view.carousel-content.character-carousel-content
         view.carousel(wx:for='{{character.images}}')
-          image.carousel-media(src='{{qiniuCDN}}/{{item}}?imageView2/1/w/750/h/460/format/jpg/q/90|imageslim', mode='widthFix')
+          image.carousel-media(src='{{item}}?imageView2/1/w/750/h/460/format/jpg/q/90|imageslim', mode='widthFix')
   
     view.character-item.br(wx:for='{{character.sections}}')
       view.character-item-title {{item.title}}
@@ -27,29 +27,31 @@ view.character
 </template>
 
 <script>
-var app = getApp()
+var app = getApp();
 
 Page({
   data: {
     qiniuCDN: app.globalData.qiniuCDN,
     character: {}
   },
-  async onLoad (query) {
-    wx.showNavigationBarLoading()
+  async onLoad(query) {
+    wx.showNavigationBarLoading();
 
-    const { _id } = query
+    const { _id } = query;
 
-    let character = await wx.reqAsync({url: `${app.globalData.serverUrl}/wiki/characters/${_id}`})
+    let character = await wx.reqAsync({
+      url: `${app.globalData.serverUrl}/wiki/characters/${_id}`
+    });
 
-    character = character.data
-
+    character = character.data.data;
+    console.log(character);
     this.setData({
       character: character
-    })
+    });
 
-    let { cname } = character
-    if (cname) wx.setNavigationBarTitle({ title: cname })
-    wx.hideNavigationBarLoading()
+    let { cname } = character;
+    if (cname) wx.setNavigationBarTitle({ title: cname });
+    wx.hideNavigationBarLoading();
   }
-}) 
+});
 </script>
